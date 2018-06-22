@@ -1,0 +1,150 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>JavaScript Playground</title>
+    <link data-name="vs/editor/editor.main" rel="stylesheet" href="./vs/editor/editor.main.css">
+    <style>
+        #runcode {
+            background-color: #1C9F31;
+            /* Green */
+            border: none;
+            color: white;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+        }
+
+        #runcode:hover {
+            background: #1EB836;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        #clearconsole {
+            color: #ffffff;
+            font-size: 12px;
+            background: #3498db;
+            padding: 7px 14px 7px 14px;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        #clearconsole:hover {
+            background: #3cb0fd;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        html,
+        body {
+            margin: 0;
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        .box {
+            display: flex;
+            flex-flow: column;
+            height: 100%;
+        }
+
+        .box .row.header {
+            flex: 0 1 auto;
+        }
+
+        .box .row.content {
+            flex: 1 1 auto;
+        }
+
+        .box .row.footer {
+            flex: 0 1 auto;
+            height: 25vh;
+        }
+
+
+        #mainContainer {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            overflow: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="mainContainer">
+
+        <div class="box">
+            <div class="row header" style="padding: 8px; background: #03355A; vertical-align: middle; display: flex; justify-content: left; align-items: center; ">
+                <div style="color: #FAFAFA;">
+                    <h3> { } JavaScript playground!</h3>
+                </div>
+            </div>
+
+            <div id="container" class="row content" style="margin-top: 12px;"></div>
+            <button id="runcode" onclick="runCode()">&#9658;</button>
+
+            <div class="row footer" id="console" style="background: #000; overflow-y: scroll; padding: 4px;">
+                <pre id="log" style="color: #FFF; font-family:Courier New, Courier, monospace;"></pre>
+                <a id="clearconsole" style="float: right; position: absolute; right: 0px; bottom: 0px;" onclick="clearConsole();">Limpiar consola</a>
+            </div>
+        </div>
+
+
+
+    </div>
+
+
+
+    <script src="./vs/loader.js"></script>
+    <script src="./vs/editor/editor.main.nls.js"></script>
+    <script src="./vs/editor/editor.main.js"></script>
+    <script>
+        editor = monaco.editor.create(document.getElementById("container"), {
+            value: "function hola() {\n\tconsole.log(\"Hola mundo!\");\n}\nhola();",
+            language: "javascript",
+            automaticLayout: true
+        });
+
+        (function () {
+            var old = console.log;
+            var logger = document.getElementById('log');
+            console.log = function () {
+                for (var i = 0; i < arguments.length; i++) {
+                    old(arguments[i]);
+                    if (typeof arguments[i] == 'object') {
+                        logger.innerHTML += '&gt; ' + (JSON && JSON.stringify ? JSON.stringify(arguments[i],
+                            undefined, 2) : arguments[i]) + '<br />';
+                    } else {
+                        logger.innerHTML += '&gt; ' + arguments[i] + '<br />';
+                    }
+                    document.getElementById('console').scrollTop = document.getElementById('console').scrollHeight;
+                }
+            }
+
+        })();
+
+
+
+        function clearConsole() {
+            document.getElementById('log').innerHTML = "";
+        }
+
+        function runCode() {
+            eval(editor.getValue());
+        }
+    </script>
+
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet" lazyload>
+
+</body>
+
+</html>
